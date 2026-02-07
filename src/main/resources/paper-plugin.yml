@@ -1,0 +1,12 @@
+name: KJControl
+version: '1.0'
+main: me.kieran.kjcontrol.KJControl
+description: A plugin for moderation and control
+author: Kieran C
+api-version: '1.21.11'
+bootstrapper: me.kieran.kjcontrol.KJControlBootstrap
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE
+      required: false

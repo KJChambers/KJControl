@@ -1,7 +1,7 @@
 
 # -----------------------------------------------
 # - Supports PlaceholderAPI
-# - Formatting must be in MiniMessage.
+# - Formatting MUST be in MiniMessage.
 # - Internal placeholders:
 #   - <username>
 #   - <displayname>
@@ -10,14 +10,17 @@
 # PlaceholderAPI: https://wiki.placeholderapi.com/
 # -----------------------------------------------
 
+# DO NOT CHANGE VERSION
+chat-format-version: 1
+
 # This will change the format of chat messages.
 format:
 
   # This will go before the name
-  prefix: "<#767676>[<gradient:#0bdfc9:#470bdf>KJControl</gradient><#767676>] "
+  prefix: "<#767676>[<gradient:#0bdfc9:#470bdf>KJControl</gradient><#767676>]<reset> "
 
   # This is who sent the message
-  name: "<username> "
+  name: "<username>"
 
   #This will be shown when people hover the name
   name_hover: "Change me in KJControl/chat-format.yml"

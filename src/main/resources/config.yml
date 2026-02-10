@@ -1,2 +1,18 @@
+# DO NOT CHANGE VERSION
+config-version: 1
+
+# Choose whether to enable or disable each feature
 features:
+
+  # chat-format.yml
   enable-chat-format: true
+
+  # messages.yml
+  messages:
+
+    # Enables all messages. If false, messages.yml will be ignored.
+    # If true, you can then enable/disable individual messages below
+    enabled: true
+
+    # Enables join and quit messages - configurable in messages.yml
+    enable-join-quit: true

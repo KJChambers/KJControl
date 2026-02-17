@@ -1,4 +1,6 @@
-# KJControl
+KJControl [![Discord](https://img.shields.io/discord/1469373726679236875.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/KRksfGhQEH)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/kjchambers?label=GitHub%20Sponsors)](https://github.com/sponsors/kjchambers)
+===========
 
 A modern, lightweight Paper plugin that provides:
 

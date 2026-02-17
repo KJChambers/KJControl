@@ -1,5 +1,6 @@
 KJControl [![GitHub Release](https://img.shields.io/github/v/release/KJChambers/KJControl)](https://github.com/KJChambers/KJControl/releases/tag/v1.0.0)
 [![Discord](https://img.shields.io/discord/1469373726679236875.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/KRksfGhQEH)
+[![GitHub License](https://img.shields.io/github/license/KJChambers/KJControl)](https://github.com/KJChambers/KJControl?tab=GPL-3.0-1-ov-file#readme)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/kjchambers?label=GitHub%20Sponsors)](https://github.com/sponsors/kjchambers)
 ===========
 

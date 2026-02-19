@@ -1,12 +1,9 @@
 package me.kieran.kjcontrol;
 
+import me.kieran.kjcontrol.config.ConfigManager;
 import me.kieran.kjcontrol.listener.ChatListener;
 import me.kieran.kjcontrol.listener.InventoryListener;
 import me.kieran.kjcontrol.listener.PlayerListener;
-import me.kieran.kjcontrol.util.ChatFormatUtil;
-import me.kieran.kjcontrol.util.ConfigUtil;
-import me.kieran.kjcontrol.util.MessagesUtil;
-import net.kyori.adventure.text.Component;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
     - It MUST extend JavaPlugin
     - The class name must match the one defined in plugin.yml and paper-plugin.yml
     - This class is created and managed by the server, not by us
- */
+*/
 public class KJControl extends JavaPlugin {
 
     /*
@@ -26,7 +23,7 @@ public class KJControl extends JavaPlugin {
         without passing it through constructors everywhere.
 
         This is a very common pattern in Bukkit/Spigot/Paper plugins.
-     */
+    */
     private static KJControl instance;
 
     /*
@@ -36,18 +33,12 @@ public class KJControl extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        // Store the plugin instance so it can be access globally
+        // Store the plugin instance so it can be accessed globally
         instance = this;
 
-        /*
-            Load the main configuration files.
 
-            ConfigUtil is responsible for:
-            - creating config files if they don't exist
-            - reading values from config.yml
-            - enabling/disabling features based on config
-         */
-        ConfigUtil.load();
+        // Load the main configuration files.
+        ConfigManager.loadConfigs();
 
         /*
             Log whether optional systems where successfully loaded.
@@ -55,8 +46,8 @@ public class KJControl extends JavaPlugin {
             getComponentLogger() is Paper's Adventure-based Logger,
             which allows formatted components instead of plain strings.
          */
-        getComponentLogger().info("Chat Format Enabled: {}", ChatFormatUtil.isLoaded());
-        getComponentLogger().info("Messages Enabled: {}", MessagesUtil.isLoaded());
+        getComponentLogger().info("Chat Format Enabled: {}", ConfigManager.isChatFormatLoaded());
+        getComponentLogger().info("Messages Enabled: {}", ConfigManager.areMessagesLoaded());
 
         /*
             Register event listeners.

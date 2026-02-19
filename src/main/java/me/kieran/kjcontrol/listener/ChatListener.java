@@ -1,9 +1,7 @@
 package me.kieran.kjcontrol.listener;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
-import me.kieran.kjcontrol.util.ChatFormatUtil;
-import me.kieran.kjcontrol.util.ConfigUtil;
-import net.kyori.adventure.text.Component;
+import me.kieran.kjcontrol.config.ConfigManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -12,7 +10,7 @@ import org.bukkit.event.Listener;
     KJControl chat format when enabled.
 
     This listener does not build chat components itself.
-    Instead, it delegates all formatting logic to ChatFormatUtil,
+    Instead, it delegates all formatting logic to ChatFormatConfig,
     keeping the listener small and easy to reason about.
  */
 public class ChatListener implements Listener {
@@ -34,7 +32,7 @@ public class ChatListener implements Listener {
         This ensures vanilla chat behaviour is preserved
         when formatting is unavailable.
      */
-        if (!ConfigUtil.chatFormatEnabled || !ChatFormatUtil.isLoaded()) return;
+        if (ConfigManager.isChatFormatDisabled() || !ConfigManager.isChatFormatLoaded()) return;
 
         /*
             Override the chat renderer for this message.
@@ -48,9 +46,9 @@ public class ChatListener implements Listener {
             - message -> the original chat message Component
             - _       -> the viewer receiving the message (unused)
 
-            All formatting logic is delegated to ChatFormatUtil.
+            All formatting logic is delegated to ConfigManager.
          */
-        event.renderer((source, _, message, _) -> ChatFormatUtil.getFormat(source, message));
+        event.renderer((source, _, message, _) -> ConfigManager.getChatFormat(source, message));
     }
 
 }

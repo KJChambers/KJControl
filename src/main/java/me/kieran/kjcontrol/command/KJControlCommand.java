@@ -1,8 +1,12 @@
 package me.kieran.kjcontrol.command;
 
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import me.kieran.kjcontrol.config.ConfigManager;
+import me.kieran.kjcontrol.util.ActionUtil;
 import me.kieran.kjcontrol.util.CommandUtil;
 
 /*
@@ -44,7 +48,28 @@ public class KJControlCommand {
              */
             .then(Commands.literal("preview")
                     .requires(sender -> sender.getSender().hasPermission("kjcontrol.preview"))
-                    .executes(CommandUtil::executePreview)
+                    .executes(ActionUtil::reload)
+            )
+
+            /*
+                "/kjcontrol editconfig"
+
+                Opens a GUI to allow admins to edit the
+                config from in-game.
+             */
+            .then(Commands.literal("editconfig")
+                    .requires(sender -> sender.getSender().hasPermission("kjcontrol.editconfig"))
+                    .executes(ActionUtil::editConfig)
+                    // "/kjcontrol editconfig enable-chat-format [true/false]"
+                    .then(Commands.literal("enable-chat-format")
+                            .then(Commands.argument("state", BoolArgumentType.bool())
+                                    .executes(ctx -> {
+                                        boolean state = ctx.getArgument("state", boolean.class);
+                                        ConfigManager.setChatFormatEnabled(state, ctx.getSource().getSender());
+                                        return Command.SINGLE_SUCCESS;
+                                    })
+                            )
+                    )
             )
 
             /*
@@ -55,7 +80,7 @@ public class KJControlCommand {
              */
             .then(Commands.literal("reload")
                     .requires(sender -> sender.getSender().hasPermission("kjcontrol.reload"))
-                    .executes(CommandUtil::executeReload)
+                    .executes(ActionUtil::preview)
             )
 
             /*

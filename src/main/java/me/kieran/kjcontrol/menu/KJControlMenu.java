@@ -49,12 +49,10 @@ public class KJControlMenu implements InventoryHolder {
             Slot items are zero-based:
             - Slot 0 is the far-left
             - Slot 8 is the far-right
-
-            Place the "Reload" menu item into slot 1
-            and the "preview" item into slot 3
          */
         menu.setItem(1, MenuUtil.getReloadBlock());
         menu.setItem(3, MenuUtil.getPreviewFormatBlock());
+        menu.setItem(5, MenuUtil.getConfigBlock());
     }
 
     /*

@@ -1,17 +1,17 @@
 package me.kieran.kjcontrol.listener;
 
+import me.kieran.kjcontrol.config.ConfigManager;
+import me.kieran.kjcontrol.menu.ConfigMenu;
 import me.kieran.kjcontrol.menu.KJControlMenu;
-import me.kieran.kjcontrol.util.ChatFormatUtil;
-import me.kieran.kjcontrol.util.ConfigUtil;
-import me.kieran.kjcontrol.util.MessagesUtil;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import me.kieran.kjcontrol.util.ActionUtil;
+import me.kieran.kjcontrol.util.PluginMessagesUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 /*
@@ -41,15 +41,20 @@ public class InventoryListener implements Listener {
          */
         Inventory inventory = event.getClickedInventory();
 
+        if (inventory == null) return;
+
+        InventoryHolder holder = inventory.getHolder(false);
+
         /*
-            Exit early if:
-            - No inventory was clicked
-            - The inventory is not owned by KJControlMenu
+            Exit early if the inventory is not owned
+            by KJControlMenu or ConfigMenu
 
             Using InventoryHolder is the safest way to
             identify custom menus.
          */
-        if (inventory == null || !(inventory.getHolder(false) instanceof KJControlMenu)) {
+        if (!(holder instanceof KJControlMenu)
+                && !(holder instanceof ConfigMenu)
+        ) {
             return;
         }
 
@@ -80,35 +85,50 @@ public class InventoryListener implements Listener {
         // Only continue if an actual item was clicked
         if (clicked != null) {
 
-            /*
-                Determine which menu item was clicked
-                based on its material type.
+            if (holder instanceof KJControlMenu) {
 
-                Since these items are uniquely defined
-                by MenuUtil, this is safe and readable.
-             */
-            switch (clicked.getType()) {
-                // Emerald block = Reload config
-                case Material.EMERALD_BLOCK:
-                    if (!clicker.hasPermission("kjcontrol.reload")) {
-                        clicker.sendMessage(MessagesUtil.noPermissionMessage("kjcontrol.reload"));
+                /*
+                    Determine which menu item was clicked
+                    based on its material type.
+
+                    Since these items are uniquely defined
+                    by MenuUtil, this is safe and readable.
+                 */
+                switch (clicked.getType()) {
+                    // Emerald block = Reload config
+                    case Material.EMERALD_BLOCK:
+                        if (!clicker.hasPermission("kjcontrol.reload")) {
+                            clicker.sendMessage(PluginMessagesUtil.noPermissionMessage("kjcontrol.reload"));
+                            break;
+                        }
+                        ActionUtil.reload(clicker);
                         break;
-                    }
-                    ConfigUtil.load(clicker);
-                    break;
-                // Diamond block = Preview chat format
-                case Material.DIAMOND_BLOCK:
-                    if (!clicker.hasPermission("kjcontrol.preview")) {
-                        clicker.sendMessage(MessagesUtil.noPermissionMessage("kjcontrol.preview"));
+                    // Diamond block = Preview chat format
+                    case Material.DIAMOND_BLOCK:
+                        if (!clicker.hasPermission("kjcontrol.preview")) {
+                            clicker.sendMessage(PluginMessagesUtil.noPermissionMessage("kjcontrol.preview"));
+                            break;
+                        }
+                        ActionUtil.preview(clicker);
                         break;
-                    }
-                    clicker.sendMessage(
-                            ChatFormatUtil.getFormat(
-                                    clicker,
-                                    Component.text("Only you can see this preview!")
-                            )
-                    );
-                    break;
+                    // Iron block = edit config
+                    case Material.IRON_BLOCK:
+                        if (!clicker.hasPermission("kjcontrol.editconfig")) {
+                            clicker.sendMessage(PluginMessagesUtil.noPermissionMessage("kjcontrol.editconfig"));
+                            break;
+                        }
+                        ActionUtil.editConfig(clicker);
+                        break;
+                }
+            } else {
+                switch (event.getSlot()) {
+                    case 2:
+                        ConfigManager.setChatFormatEnabled(ConfigManager.isChatFormatDisabled(), clicker);
+                        break;
+                    case 6:
+                        ConfigManager.setMessagesEnabled(ConfigManager.areMessagesDisabled(), clicker);
+                        break;
+                }
             }
 
             /*

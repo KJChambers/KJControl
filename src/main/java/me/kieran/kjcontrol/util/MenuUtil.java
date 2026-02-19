@@ -13,6 +13,19 @@ import java.util.List;
 public final class MenuUtil {
 
     /*
+        Applies a hidden enchantment to an ItemMeta
+        to produce the enchanted "glow" effect.
+
+        The enchantment is intentionally hidden using
+        ItemFlag.HIDE_ENCHANTS so players do not see
+        irrelevant enchantment details in the tooltip.
+     */
+    private static void makeGlow(ItemMeta meta) {
+        meta.addEnchant(Enchantment.SHARPNESS, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+    }
+
+    /*
         Generic factory method for creating styled menu blocks.
 
         This method centralises all ItemStack display configuration,
@@ -131,17 +144,78 @@ public final class MenuUtil {
         );
     }
 
-    /*
-        Applies a hidden enchantment to an ItemMeta
-        to produce the enchanted "glow" effect.
+    public static ItemStack getConfigBlock() {
+        return createBlock(
+                Material.IRON_BLOCK,
+                Component.text("Edit config settings", NamedTextColor.LIGHT_PURPLE),
+                List.of(
+                        Component.text(
+                                "Opens a config GUI with options to",
+                                NamedTextColor.GRAY
+                        ),
+                        Component.text(
+                                "change different fields.",
+                                NamedTextColor.GRAY
+                        )
+                ),
+                true
+        );
+    }
 
-        The enchantment is intentionally hidden using
-        ItemFlag.HIDE_ENCHANTS so players do not see
-        irrelevant enchantment details in the tooltip.
-     */
-    private static void makeGlow(ItemMeta meta) {
-        meta.addEnchant(Enchantment.SHARPNESS, 1, true);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+    public static ItemStack getFormatEnabledBlock() {
+        return createBlock(
+                Material.EMERALD_BLOCK,
+                Component.text("Chat Format Enabled", NamedTextColor.GREEN),
+                List.of(
+                        Component.text(
+                                "Click to disable chat format!",
+                                NamedTextColor.GRAY
+                        )
+                ),
+                false
+        );
+    }
+
+    public static ItemStack getFormatDisabledBlock() {
+        return createBlock(
+                Material.REDSTONE_BLOCK,
+                Component.text("Chat Format Disabled", NamedTextColor.RED),
+                List.of(
+                        Component.text(
+                                "Click to enable chat format!",
+                                NamedTextColor.GRAY
+                        )
+                ),
+                false
+        );
+    }
+
+    public static ItemStack getMessagesEnabledBlock() {
+        return createBlock(
+                Material.EMERALD_BLOCK,
+                Component.text("Messages Enabled", NamedTextColor.GREEN),
+                List.of(
+                        Component.text(
+                                "Click to disable messages!",
+                                NamedTextColor.GRAY
+                        )
+                ),
+                false
+        );
+    }
+
+    public static ItemStack getMessagesDisabledBlock() {
+        return createBlock(
+                Material.REDSTONE_BLOCK,
+                Component.text("Messages Disabled", NamedTextColor.RED),
+                List.of(
+                        Component.text(
+                                "Click to enable messages!",
+                                NamedTextColor.GRAY
+                        )
+                ),
+                false
+        );
     }
 
 }

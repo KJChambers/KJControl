@@ -1,24 +1,23 @@
-package me.kieran.kjcontrol.util;
+package me.kieran.kjcontrol.config;
 
 import me.kieran.kjcontrol.KJControl;
 import me.kieran.kjcontrol.record.ChatFormat;
-import me.kieran.kjcontrol.record.ResolvedChatFormat;
-import net.kyori.adventure.text.Component;
-import org.bukkit.command.CommandSender;
+import me.kieran.kjcontrol.util.PluginMessagesUtil;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import java.io.File;
 
-public final class ChatFormatUtil {
+public final class ChatFormatConfig {
 
     /*
-        The latest version number of the chat-format.yml file
-        that this plugin expects.
+        The latest supported version of chat-format.yml
 
-        This allows us to warn users if they are using an old
-        configuration file that may be missing new options
+        If the version inside the user's files does not match this,
+        we warn them that their configuration may be outdated.
+
+        This helps prevent silent breakage when new options
+        are introduced in future updates.
      */
     private static final int LATEST_CONFIG_VERSION = 1;
 
@@ -34,30 +33,42 @@ public final class ChatFormatUtil {
     /*
         The currently loaded chat format configuration.
 
-        If this is null, chat formatting is considered disabled
-        or failed to load correctly.
+        If null:
+        - The config failed to load
+        - Required fields were missing
+        - Chat formatting should be treated as disabled
+
+        Consumers should always check via ConfigManager
+        rather than accessing this directly.
      */
     private static ChatFormat loadedFormat;
 
     /*
-        Loads (or reloads) the chat-format.yml file and parses it
-        into a ChatFormat object.
+        Loads (or reloads) chat-format.yml from disk.
 
-        This method is called:
-        - when the plugin enables
-        - when the plugin is reloaded via command
+        This method:
+        1. Ensures the file exists
+        2. Loads YAML into memory
+        3. Parses values into a ChatFormat object
+        4. Validates required fields
+
+        It is expected to be called:
+        - During plugin startup
+        - During manual reload via command
      */
     public static void load() {
         KJControl plugin = KJControl.getInstance();
 
         /*
-            Defensive check to ensure this class is not used
-            when the chat format feature is disabled in config.yml.
+            Defensive developer check
 
-            If this happens, it indicates a developer error,
-            not a user misconfiguration.
+            If this loader is invoked while the feature
+            is disabled in the main config, that indicates
+            a logical error in the codebase.
+
+            This is NOT a user configuration problem.
          */
-        if (!ConfigUtil.chatFormatEnabled) {
+        if (ConfigManager.isChatFormatDisabled()) {
             throw new IllegalStateException(
                     "Chat Format loader accessed while feature disabled"
             );
@@ -91,11 +102,11 @@ public final class ChatFormatUtil {
                 This allows us to warn users if their config is outdated.
              */
             int configVersion = config.getInt("chat-format-version");
-            if (configVersion != LATEST_CONFIG_VERSION) {
-                plugin.getComponentLogger().warn(
-                        "KJControl/chat-format.yml is out of date. Please regenerate to avoid unexpected behaviour"
-                );
-            }
+            if (configVersion != LATEST_CONFIG_VERSION) plugin.getComponentLogger().warn(
+                    "KJControl/chat-format.yml version mismatch. Expected {}, found {}",
+                    LATEST_CONFIG_VERSION,
+                    configVersion
+            );
 
             /*
                 Create a ChatFormat object from the configuration values.
@@ -142,55 +153,21 @@ public final class ChatFormatUtil {
                 and provides useful debugging information.
              */
             plugin.getComponentLogger().error("Failed to load chat-format.yml");
-            plugin.getComponentLogger().error(MessagesUtil.defaultErrorMessage(e));
+            plugin.getComponentLogger().error(PluginMessagesUtil.defaultErrorMessage(e));
         }
     }
 
     /*
-        Returns whether a valid chat format is currently loaded.
+        Returns the currently loaded ChatFormat instance.
 
-        Other parts of the plugin can use this to decide whether
-        chat formatting should be applied or skipped.
+        Package-private on purpose:
+        Only ConfigManager (or classes in the same package)
+        should access raw configuration state.
+
+        Consumers should NOT cache this reference.
      */
-    public static boolean isLoaded() {
-        return loadedFormat != null;
-    }
-
-    /*
-        Builds the full chat format for a specific player and message.
-
-        This method:
-        - resolves placeholders for the player
-        - deserializes MiniMessage strings into Components
-        - applies hover and click events
-        - attaches the message to the suffix so colours inherit correctly.
-     */
-    public static Component getFormat(Player player, Component message) {
-        /*
-            Resolve the raw ChatFormat into a ResolvedChatFormat
-            that contains fully built Adventure Components.
-         */
-        ResolvedChatFormat format = loadedFormat.resolve(player, message);
-
-        /*
-            Combine the prefix, name, and suffix+message
-            into the final chat message component.
-         */
-        return format.prefix()
-                .append(format.name())
-                .append(format.suffixMessage());
-    }
-
-    /*
-        Convenience overload for CommandSender.
-
-        This allows commands or other systems to call GetFormat
-        without manually casting to Player.
-
-        NOTE: This method assumes the sender is a Player
-     */
-    public static Component getFormat(CommandSender player, Component message) {
-        return getFormat((Player) player, message);
+    static ChatFormat getRawFormat() {
+        return loadedFormat;
     }
 
 }

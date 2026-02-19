@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import me.kieran.kjcontrol.KJControl;
+import me.kieran.kjcontrol.config.ConfigManager;
 import me.kieran.kjcontrol.menu.KJControlMenu;
 import me.kieran.kjcontrol.record.HelpEntry;
 import net.kyori.adventure.text.Component;
@@ -68,60 +69,6 @@ public class CommandUtil {
             Brigadier requires a command result.
             SINGLE_SUCCESS indicates the command ran successfully.
          */
-        return Command.SINGLE_SUCCESS;
-    }
-
-    /*
-        Handles /kjcontrol preview.
-
-        This sends the player a preview of the current
-        chat format using their own context.
-     */
-    public static int executePreview(CommandContext<CommandSourceStack> ctx) {
-
-        // Extract the sender from the command context.
-        CommandSender sender = ctx.getSource().getSender();
-
-        /*
-            Only players can preview chat formats,
-            since formatting depends on player data
-            like name, display name, and placeholders.
-         */
-        if (sender instanceof Player)
-
-            /*
-                Generate a formatted chat message using
-                the current chat format configuration.
-
-                The message text here is only visible
-                to the command sender.
-             */
-            sender.sendMessage(
-                    ChatFormatUtil.getFormat(sender, Component.text("Only you can see this preview!"))
-            );
-
-        return Command.SINGLE_SUCCESS;
-    }
-
-    /*
-        Handles /kjcontrol reload
-
-        This reloads all plugin configuration files
-        and provides feedback to the sender.
-     */
-    public static int executeReload(CommandContext<CommandSourceStack> ctx) {
-        // Get the command sender
-        CommandSender sender = ctx.getSource().getSender();
-
-        /*
-            Reload the configuration.
-
-            ConfigUtil handles:
-            - reloading config.yml
-            - reloading feature configs
-            - sending feedback to the sender
-         */
-        ConfigUtil.load(sender);
         return Command.SINGLE_SUCCESS;
     }
 

@@ -50,7 +50,7 @@ public class ChatListener implements Listener {
 
             All formatting logic is delegated to ChatFormatUtil.
          */
-        event.renderer((source, _, message, _) -> ChatFormatUtil.getFormat(source, message));
+        event.renderer((source, sourceDisplayName, message, audience) -> ChatFormatUtil.getFormat(source, message));
     }
 
 }
